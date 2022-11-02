@@ -1,0 +1,360 @@
+#######################
+###    SLIDE #12    ###
+#######################
+
+# This is an example Starter pipeline configuration
+# Use a skeleton to build, test and deploy using manual and parallel steps
+# -----
+# You can specify a custom docker image from Docker Hub as your build environment.
+
+image: atlassian/default-image:3
+
+pipelines:
+  default:
+    - parallel:
+      - step:
+          name: 'Build and Test'
+          script:
+            - echo "Your build and test goes here..."
+      - step:
+          name: 'Lint'
+          script:
+            - echo "Your linting goes here..."
+      - step:
+          name: 'Security scan'
+          script:
+            - echo "Your security scan goes here..."
+
+    # The following deployment steps will be executed for each pipeline run. To configure your steps and conditionally deploy see https://support.atlassian.com/bitbucket-cloud/docs/configure-bitbucket-pipelinesyml/
+    - step:
+        name: 'Deployment to Staging'
+        deployment: staging
+        script:
+          - echo "Your deployment to staging script goes here..."
+    - step:
+        name: 'Deployment to Production'
+        deployment: production
+        trigger: 'manual'
+        script:
+          - echo "Your deployment to production script goes here..."
+
+
+#######################
+###    SLIDE #15    ###
+#######################
+
+
+image: rocker/tidyverse:4.0.2
+
+definitions:
+  caches:
+    site-library: /usr/local/lib/R/site-library
+
+pipelines:
+  default:
+    - step:
+        name: 'Document and Check'
+        caches:
+          - site-library
+        script:
+          - Rscript -e 'devtools::install_deps(dependencies=TRUE)'
+          - Rscript -e 'devtools::document()'
+          - Rscript -e 'devtools::check(error_on="error")'
+    - step:
+        name: 'Lint'
+        script:
+          - echo "Your linting goes here..."
+    - step:
+        name: 'Security scan'
+        script:
+          - echo "Your security scan goes here..."
+
+    # The following deployment steps will be executed for each pipeline run. To configure your steps and conditionally deploy see https://support.atlassian.com/bitbucket-cloud/docs/configure-bitbucket-pipelinesyml/
+    - step:
+        name: 'Deployment to Staging'
+        deployment: staging
+        script:
+          - echo "Your deployment to staging script goes here..."
+    - step:
+        name: 'Deployment to Production'
+        deployment: production
+        trigger: 'manual'
+        script:
+          - echo "Your deployment to production script goes here..."
+
+
+
+#######################
+###    SLIDE #19    ###
+#######################
+
+image: rocker/tidyverse:4.0.2
+
+definitions:
+  caches:
+    site-library: /usr/local/lib/R/site-library
+
+pipelines:
+  default:
+    - step:
+        name: 'Document and Check'
+        caches:
+          - site-library
+        script:
+          - Rscript -e 'devtools::install_deps(dependencies=TRUE)'
+          - Rscript -e 'devtools::document()'
+          - Rscript -e 'devtools::check()'
+          
+    - step:
+        name: 'Lint'
+        caches:
+          - site-library
+        script:
+          - Rscript -e 'install.packages("lintr")'
+          - Rscript -e 'lintr::lint_package(linters = lintr::with_defaults(line_length_linter = NULL, object_name_linter = NULL))'
+    - step:
+        name: 'Security scan'
+        script:
+          - echo "Your security scan goes here..."
+
+    # The following deployment steps will be executed for each pipeline run. To configure your steps and conditionally deploy see https://support.atlassian.com/bitbucket-cloud/docs/configure-bitbucket-pipelinesyml/
+    - step:
+        name: 'Deployment to Staging'
+        deployment: staging
+        script:
+          - echo "Your deployment to staging script goes here..."
+    - step:
+        name: 'Deployment to Production'
+        deployment: production
+        trigger: 'manual'
+        script:
+          - echo "Your deployment to production script goes here..."
+
+
+#######################
+###    SLIDE #23    ###
+#######################
+
+image: rocker/tidyverse:4.0.2
+
+definitions:
+  caches:
+    site-library: /usr/local/lib/R/site-library
+
+pipelines:
+  default:
+    - step:
+        name: 'Document and Check'
+        caches:
+          - site-library
+        script:
+          - Rscript -e 'devtools::install_deps(dependencies=TRUE)'
+          - Rscript -e 'devtools::document()'
+          - Rscript -e 'devtools::check()'
+          
+    - step:
+        name: 'Lint'
+        caches:
+          - site-library
+        script:
+          - Rscript -e 'install.packages("lintr")'
+          - Rscript -e 'lintr::lint_package(linters = lintr::with_defaults(line_length_linter = NULL, object_name_linter = NULL))'
+  
+  pull-requests:
+    '**':
+      - step:
+          name: 'Test'
+          caches: 
+            - site-library
+          script:
+            - Rscript -e 'devtools::test()'    
+
+    # The following deployment steps will be executed for each pipeline run. To configure your steps and conditionally deploy see https://support.atlassian.com/bitbucket-cloud/docs/configure-bitbucket-pipelinesyml/
+    - step:
+        name: 'Deployment to Staging'
+        deployment: staging
+        script:
+          - echo "Your deployment to staging script goes here..."
+    - step:
+        name: 'Deployment to Production'
+        deployment: production
+        trigger: 'manual'
+        script:
+          - echo "Your deployment to production script goes here..."
+
+
+
+#######################
+###    SLIDE #26    ###
+#######################
+
+definitions:
+  caches:
+    site-library: /usr/local/lib/R/site-library
+
+pipelines:
+  default:
+    - step:
+        name: 'Document and Check'
+        image: rocker/tidyverse:4.0.2
+        caches:
+          - site-library
+        script:
+          - Rscript -e 'devtools::install_deps(dependencies=TRUE)'
+          - Rscript -e 'devtools::document()'
+          - Rscript -e 'devtools::check()'
+          
+    - step:
+        name: 'Lint'
+        image: rocker/tidyverse:4.0.2
+        caches:
+          - site-library
+        script:
+          - Rscript -e 'install.packages("lintr")'
+          - Rscript -e 'lintr::lint_package(linters = lintr::with_defaults(line_length_linter = NULL, object_name_linter = NULL))'
+  
+  pull-requests:
+    '**':
+      - step:
+          name: 'Test'
+          image: rocker/tidyverse:4.0.2
+          caches: 
+            - site-library
+          script:
+            - Rscript -e 'devtools::test()'    
+  tags:
+    '*':
+      - step:
+          name: 'Build'
+          image: rocker/tidyverse:4.0.2
+          caches:
+            - site-library
+          script:
+            - Rscript -e 'devtools::install_deps(dependencies=TRUE)'
+            - Rscript -e 'devtools::document()'
+            - Rscript -e 'devtools::build(path="deploy", vignettes = FALSE)'
+          artifacts:
+            - deploy/*.tar.gz
+             
+      - step:
+          name: 'Deploy'
+          image: curlimages/curl:latest
+          trigger: manual
+          deployment: Production
+          script:
+            - export filename=`ls deploy | grep tar.gz`
+            - echo $filename
+            - curl -v --user "$NEXUS_USER:$NEXUS_PASS" --upload-file deploy/$filename http://<host>:<port>/repository/<repository_name>/src/contrib/$filename
+
+
+#######################
+###    SLIDE #30    ###
+#######################
+
+definitions:
+  caches:
+    site-library: /usr/local/lib/R/site-library
+  steps:
+    - step: &create-pr
+        name: Create Pull Request
+        image: everpeace/curl-jq
+        caches:
+          - node
+        script:
+          - export DESTINATION_BRANCH="${BITBUCKET_BRANCH}"
+          - export CLOSE_ME=true
+          - >
+            export BB_TOKEN=$(curl -s -S -f -X POST -u "${BB_AUTH_STRING}" \
+              https://bitbucket.org/site/oauth2/access_token \
+              -d grant_type=client_credentials -d scopes="repository" | jq --raw-output '.access_token')
+          - >
+            export DEFAULT_REVIEWERS=$(curl https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/default-reviewers \
+              -s -S -f -X GET \
+              -H "Authorization: Bearer ${BB_TOKEN}" | jq '.values' | jq 'map({uuid})' )
+          - >
+            curl https://api.bitbucket.org/2.0/repositories/${BITBUCKET_REPO_OWNER}/${BITBUCKET_REPO_SLUG}/pullrequests \
+              -s -S -f -X POST \
+              -H 'Content-Type: application/json' \
+              -H "Authorization: Bearer ${BB_TOKEN}" \
+              -d '{ 
+                    "title": "Merge in '"${BITBUCKET_BRANCH}-styler"'", 
+                    "description": "Automated PR creation process :-)", 
+                    "source": { 
+                      "branch": { 
+                        "name": "'"${BITBUCKET_BRANCH}-styler"'"
+                      }
+                    },
+                    "destination": { 
+                      "branch": { 
+                        "name": "'"${DESTINATION_BRANCH}"'"
+                      } 
+                    }, 
+                    "close_source_branch": '"${CLOSE_ME}"',
+                    "reviewers": '"${DEFAULT_REVIEWERS}"'
+                  }'
+
+pipelines:
+  default:
+    - step:
+        name: 'Document and Check'
+        image: rocker/tidyverse:4.0.2
+        caches:
+          - site-library
+        script:
+          - Rscript -e 'devtools::install_deps(dependencies=TRUE)'
+          - Rscript -e 'devtools::document()'
+          - Rscript -e 'devtools::check()'
+          
+    - step:
+        name: 'Lint'
+        image: rocker/tidyverse:4.0.2
+        caches:
+          - site-library
+        script:
+          - Rscript -e 'install.packages("lintr")'
+          - Rscript -e 'lintr::lint_package(linters = lintr::with_defaults(line_length_linter = NULL, object_name_linter = NULL))'        
+
+    - step:
+        name: "Automatic styler"
+        image: rocker/tidyverse:4.0.2
+        trigger: manual
+        script:
+        - Rscript -e 'install.packages("styler")'
+        - Rscript -e 'styler::style_pkg()'
+        - git checkout -b ${BITBUCKET_BRANCH}-styler
+        - git commit -am "[skip ci] Automatic styler."
+        - git push
+    - step: *create-pr
+  
+  pull-requests:
+    '**':
+      - step:
+          name: 'Test'
+          image: rocker/tidyverse:4.0.2
+          caches: 
+            - site-library
+          script:
+            - Rscript -e 'devtools::test()'    
+  tags:
+    '*':
+      - step:
+          name: 'Build'
+          image: rocker/tidyverse:4.0.2
+          caches:
+            - site-library
+          script:
+            - Rscript -e 'devtools::install_deps(dependencies=TRUE)'
+            - Rscript -e 'devtools::document()'
+            - Rscript -e 'devtools::build(path="deploy", vignettes = FALSE)'
+          artifacts:
+            - deploy/*.tar.gz
+             
+      - step:
+          name: 'Deploy'
+          image: curlimages/curl:latest
+          trigger: manual
+          deployment: Production
+          script:
+            - export filename=`ls deploy | grep tar.gz`
+            - echo $filename
+            - curl -v --user "$NEXUS_USER:$NEXUS_PASS" --upload-file deploy/$filename http://<host>:<port>/repository/<repository_name>/src/contrib/$filename
